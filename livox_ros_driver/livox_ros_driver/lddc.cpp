@@ -493,10 +493,10 @@ uint32_t Lddc::PublishImuData(LidarDataQueue *queue, uint32_t packet_num,
   LivoxEthPacket *raw_packet =
       reinterpret_cast<LivoxEthPacket *>(storage_packet.raw_data);
   timestamp = GetStoragePacketTimestamp(&storage_packet, data_source);
-  if (timestamp >= 0) {
-    imu_data.header.stamp =
-        ros::Time(timestamp / 1000000000.0);  // to ros time stamp
-  }
+  //if (timestamp >= 0) {
+  //  imu_data.header.stamp = ros::Time(timestamp / 1000000000.0);  // to ros time stamp
+  //}
+  imu_data.header.stamp = ros::Time::now();
 
   uint8_t point_buf[2048];
   LivoxImuDataProcess(point_buf, raw_packet);
