@@ -100,6 +100,7 @@ class Lddc {
   ros::Publisher *global_pub_;
   ros::Publisher *private_imu_pub_[kMaxSourceLidar];
   ros::Publisher *global_imu_pub_;
+  ros::Publisher *ros_stamp_publisher_;
 
   ros::NodeHandle *cur_node_;
   rosbag::Bag *bag_;

@@ -60,6 +60,7 @@ Lddc::Lddc(int format, int multi_topic, int data_src, int output_type,
   global_imu_pub_ = nullptr;
   cur_node_ = nullptr;
   bag_ = nullptr;
+  ros_stamp_publisher_ = nullptr;
 };
 
 Lddc::~Lddc() {
@@ -69,6 +70,10 @@ Lddc::~Lddc() {
 
   if (global_imu_pub_) {
     delete global_imu_pub_;
+  }
+
+  if (ros_stamp_publisher_){
+    delete ros_stamp_publisher_;
   }
 
   if (lds_) {
@@ -426,6 +431,17 @@ uint32_t Lddc::PublishCustomPointcloud(LidarDataQueue *queue,
       packet_offset_time = 0;
       /** convert to ros time stamp */
       livox_msg.header.stamp = ros::Time(timestamp / 1000000000.0);
+      std_msgs::Header ros_stamp;
+      ros_stamp.seq = livox_msg.header.seq;
+      ros_stamp.frame_id = livox_msg.header.frame_id;
+      ros_stamp.stamp = ros::Time::now();
+
+      if (ros_stamp_publisher_ == nullptr){
+        ros::Publisher *pub = new ros::Publisher;
+        *pub = cur_node_->advertise<std_msgs::Header>("ros_header", 20);
+        ros_stamp_publisher_ = pub;
+      }
+      ros_stamp_publisher_->publish(ros_stamp);
     } else {
       packet_offset_time = (uint32_t)(timestamp - livox_msg.timebase);
     }
